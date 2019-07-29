@@ -15,7 +15,7 @@ public class Differentiator {
     private static final int BITS_PER_HEX_DIGIT = 4;
     static final String MESSAGE_OK = "--- File extension matches file content: ";
     static final String MESSAGE_FILE_NOT_FOUND = "--- File not found: ";
-    static final String MESSAGE_EXTENSION_LIES = "--- File extension doesn't match file content ---";
+    static final String MESSAGE_EXTENSION_LIES = "Extension is {0}, while actually it's a {1}.";
 
 
     String checkFile(String filePath) {
@@ -25,7 +25,6 @@ public class Differentiator {
             return MESSAGE_FILE_NOT_FOUND + filePath;
         }
 
-        //TODO move to another class
         FileType fileTypeByExtension = getFileTypeByExtension(givenFile);
         FileType fileTypeByContent = getFileTypeByContent(filePath);
 
@@ -45,7 +44,7 @@ public class Differentiator {
                 }
             }
         }
-        throw new FileContentTypeNotRecognizedRuntimeException("\n"+givenFile);
+        throw new FileContentTypeNotRecognizedRuntimeException(givenFile);
     }
 
     private String getHexSignature(String givenFile) {

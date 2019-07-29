@@ -8,8 +8,7 @@ public class App {
 
     public static void main(String[] args){
 
-        String filePath = "E:\\egit\\differentiator\\src\\main\\resources\\file\\textDoc.txt"; //calculator.gif
-        LOGGER.info(new Differentiator().checkFile(filePath));
+        LOGGER.info(new Differentiator().checkFile(args[0]));
 
 
     }
