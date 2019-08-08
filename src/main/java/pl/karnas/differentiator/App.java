@@ -8,8 +8,11 @@ public class App {
 
     public static void main(String[] args){
 
+        if (args.length != 1) {
+            LOGGER.warning("required one path to a file, return");
+            return;
+        }
+
         LOGGER.info(new Differentiator().checkFile(args[0]));
-
-
     }
 }

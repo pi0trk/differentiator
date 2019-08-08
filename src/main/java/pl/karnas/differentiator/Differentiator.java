@@ -1,8 +1,5 @@
 package pl.karnas.differentiator;
 
-import pl.karnas.differentiator.exception.FileContentTypeNotRecognizedRuntimeException;
-import pl.karnas.differentiator.exception.FileExtensionNotRecognizedRuntimeException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,40 +8,63 @@ import java.util.List;
 
 public class Differentiator {
 
-    private static final String[] hexSymbols = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f" };
+    private static final String[] hexSymbols = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
     private static final int BITS_PER_HEX_DIGIT = 4;
-    static final String MESSAGE_OK = "--- File extension matches file content: ";
-    static final String MESSAGE_FILE_NOT_FOUND = "--- File not found: ";
-    static final String MESSAGE_EXTENSION_LIES = "Extension is {0}, while actually it's a {1}.";
 
+    enum Msgs {
+        MESSAGE_OK("--- File extension matches file content. ---", 0),
+        FILE_NOT_FOUND("--- File not found: ", 404),
+        EXTENSION_LIES("Extension is %s, while actually it's a %s.", 500),
+        FILE_IS_EMPTY("--- File is empty ---", 200);
+
+        private String msgText;
+        private int errorCode;
+
+        Msgs(String msgText, int errorCode) {
+            this.msgText = msgText;
+            this.errorCode = errorCode;
+        }
+
+        public String getMsgText() {
+            return msgText;
+        }
+
+        public int getErrorCode() {
+            return errorCode;
+        }
+    }
 
     String checkFile(String filePath) {
 
         File givenFile = new File(filePath);
         if (!givenFile.exists()) {
-            return MESSAGE_FILE_NOT_FOUND + filePath;
+            return Msgs.FILE_NOT_FOUND.getMsgText() + filePath;
+        }
+
+        if (givenFile.length() == 0) {
+            return Msgs.FILE_IS_EMPTY.getMsgText();
         }
 
         FileType fileTypeByExtension = getFileTypeByExtension(givenFile);
         FileType fileTypeByContent = getFileTypeByContent(filePath);
 
         if (fileTypeByExtension.equals(fileTypeByContent)) {
-            return MESSAGE_OK+fileTypeByContent.toString();
+            return Msgs.MESSAGE_OK.getMsgText();
         }
-        return String.format(MESSAGE_EXTENSION_LIES, fileTypeByExtension.getExtension(), fileTypeByContent.getExtension());
+        return String.format(Msgs.EXTENSION_LIES.getMsgText(), fileTypeByExtension.getExtension(), fileTypeByContent.getExtension());
     }
 
     private FileType getFileTypeByContent(String givenFile) {
         String hexSignatureFromFile = getHexSignature(givenFile);
-        for (FileType fileType: FileType.values()){
+        for (FileType fileType : FileType.values()) {
             List<String> hesSignatures = fileType.getHexSignatures();
-            for (String hexSignature: hesSignatures) {
+            for (String hexSignature : hesSignatures) {
                 if (hexSignatureFromFile.startsWith(hexSignature)) {
                     return fileType;
                 }
             }
         }
-        throw new FileContentTypeNotRecognizedRuntimeException(givenFile);
+        throw new FileContentTypeNotRecognizedException(hexSignatureFromFile);
     }
 
     private String getHexSignature(String givenFile) {
@@ -71,12 +91,12 @@ public class Differentiator {
 
     private FileType getFileTypeByExtension(File givenFile) {
         String givenExtension = getFileExtension(givenFile);
-        for (FileType fileType: FileType.values()){
-            if (fileType.getExtension().equalsIgnoreCase(givenExtension)){
+        for (FileType fileType : FileType.values()) {
+            if (fileType.getExtension().equalsIgnoreCase(givenExtension)) {
                 return fileType;
             }
         }
-        throw new FileExtensionNotRecognizedRuntimeException(givenExtension);
+        throw new FileExtensionNotRecognizedException(givenExtension);
     }
 
     private String getFileExtension(File file) {

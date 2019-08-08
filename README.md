@@ -9,3 +9,7 @@ Program should check and prevent that from happening!
 4. If extension isn't handled, program honestly states so (throwing an appropriate exception, one that fits this situation).
 5. We expect JPG, GIF and TXT to be handled. Anything more is a plus.
 6. If extension lies, program states: Extension is A, while actually it's a B.
+
+Example how to run program:
+    mvn clean package -DskipTests
+    java -jar target/differentiator-0.2.jar src/test/resources/file/notagif.gif

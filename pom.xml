@@ -6,7 +6,7 @@
 
     <groupId>pl.karnas</groupId>
     <artifactId>differentiator</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,7 +43,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pl.karnas.App</mainClass>
+                            <mainClass>pl.karnas.differentiator.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
