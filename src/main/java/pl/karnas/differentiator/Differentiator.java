@@ -12,10 +12,10 @@ public class Differentiator {
     private static final int BITS_PER_HEX_DIGIT = 4;
 
     enum Msgs {
-        MESSAGE_OK("--- File extension matches file content. ---", 0),
+        MESSAGE_OK("--- File extension matches file content. ---", 200),
         FILE_NOT_FOUND("--- File not found: ", 404),
-        EXTENSION_LIES("Extension is %s, while actually it's a %s.", 500),
-        FILE_IS_EMPTY("--- File is empty ---", 200);
+        EXTENSION_LIES("Extension is %s, while actually it's a %s.", 422),
+        FILE_IS_EMPTY("--- File is empty ---", 500);
 
         private String msgText;
         private int errorCode;
@@ -25,7 +25,8 @@ public class Differentiator {
             this.errorCode = errorCode;
         }
 
-        public String getMsgText() {
+        @Override
+        public String toString() {
             return msgText;
         }
 
@@ -38,20 +39,20 @@ public class Differentiator {
 
         File givenFile = new File(filePath);
         if (!givenFile.exists()) {
-            return Msgs.FILE_NOT_FOUND.getMsgText() + filePath;
+            return Msgs.FILE_NOT_FOUND + filePath;
         }
 
         if (givenFile.length() == 0) {
-            return Msgs.FILE_IS_EMPTY.getMsgText();
+            return Msgs.FILE_IS_EMPTY + filePath;
         }
 
         FileType fileTypeByExtension = getFileTypeByExtension(givenFile);
         FileType fileTypeByContent = getFileTypeByContent(filePath);
 
         if (fileTypeByExtension.equals(fileTypeByContent)) {
-            return Msgs.MESSAGE_OK.getMsgText();
+            return Msgs.MESSAGE_OK.toString();
         }
-        return String.format(Msgs.EXTENSION_LIES.getMsgText(), fileTypeByExtension.getExtension(), fileTypeByContent.getExtension());
+        return String.format(Msgs.EXTENSION_LIES.toString(), fileTypeByExtension.getExtension(), fileTypeByContent.getExtension());
     }
 
     private FileType getFileTypeByContent(String givenFile) {
